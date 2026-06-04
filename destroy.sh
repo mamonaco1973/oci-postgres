@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ================================================================================
-# Destroy — tear down the MySQL Terraform stack and all OCI resources
+# Destroy — tear down the PostgreSQL Terraform stack and all OCI resources
 # ================================================================================
 
 # Resolve compartment — fall back to tenancy OCID if OCI_COMPARTMENT_ID is unset
@@ -11,5 +11,5 @@ if [ -z "${OCI_COMPARTMENT_ID:-}" ]; then
 fi
 export TF_VAR_compartment_ocid="$OCI_COMPARTMENT_ID"
 
-terraform -chdir=01-mysql init
-terraform -chdir=01-mysql destroy -auto-approve
+terraform -chdir=01-postgres init
+terraform -chdir=01-postgres destroy -auto-approve

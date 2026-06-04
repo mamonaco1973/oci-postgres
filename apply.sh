@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ================================================================================
-# Apply — validate env, deploy MySQL stack, run post-deployment validation
+# Apply — validate env, deploy PostgreSQL stack, run post-deployment validation
 # ================================================================================
 
 ./check_env.sh
@@ -17,7 +17,7 @@ if [ -z "${OCI_COMPARTMENT_ID:-}" ]; then
 fi
 export TF_VAR_compartment_ocid="$OCI_COMPARTMENT_ID"
 
-terraform -chdir=01-mysql init
-terraform -chdir=01-mysql apply -auto-approve
+terraform -chdir=01-postgres init
+terraform -chdir=01-postgres apply -auto-approve
 
 ./validate.sh

@@ -1,34 +1,32 @@
 # ================================================================================
 # VCN
-# Two-tier network: public subnet hosts phpMyAdmin; private subnet hosts
-# the MySQL DB System.
+# Two-tier network: public subnet hosts pgweb; private subnet hosts
+# the PostgreSQL DB System.
 #
 # CIDR layout — 10.0.0.0/23:
-#   10.0.0.0/25  — mysql-subnet (private, DB system)
-#   10.0.1.0/25  — vm-subnet    (public,  phpMyAdmin)
+#   10.0.0.0/25  — postgres-subnet (private, DB system)
+#   10.0.1.0/25  — vm-subnet       (public,  pgweb VM)
 # ================================================================================
 
 resource "oci_core_vcn" "main" {
   compartment_id = var.compartment_ocid
   cidr_block     = "10.0.0.0/23"
-  display_name   = "mysql-vcn"
-  # dns_label must be alphanumeric and ≤ 15 chars
-  dns_label = "mysqlvcn"
+  display_name   = "postgres-vcn"
+  dns_label      = "postgresvcn"
 }
 
 resource "oci_core_internet_gateway" "main" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "mysql-igw"
+  display_name   = "postgres-igw"
   enabled        = true
 }
 
-# NAT gateway provides egress-only internet access for the MySQL subnet —
-# the DB system cannot be reached from the internet through it
+# NAT gateway provides egress-only internet access for the PostgreSQL subnet
 resource "oci_core_nat_gateway" "main" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "mysql-nat"
+  display_name   = "postgres-nat"
   block_traffic  = false
 }
 
@@ -36,11 +34,11 @@ resource "oci_core_nat_gateway" "main" {
 # Route Tables
 # ================================================================================
 
-# vm-subnet routes through the IGW — phpMyAdmin needs a public IP and internet
+# vm-subnet routes through the IGW — pgweb needs a public IP and internet
 resource "oci_core_route_table" "vm" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "mysql-vm-rt"
+  display_name   = "postgres-vm-rt"
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -49,11 +47,11 @@ resource "oci_core_route_table" "vm" {
   }
 }
 
-# mysql-subnet routes through NAT — DB system has no public endpoint
-resource "oci_core_route_table" "mysql" {
+# postgres-subnet routes through NAT — DB system has no public endpoint
+resource "oci_core_route_table" "postgres" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "mysql-db-rt"
+  display_name   = "postgres-db-rt"
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -66,11 +64,11 @@ resource "oci_core_route_table" "mysql" {
 # Security Lists
 # ================================================================================
 
-# MySQL subnet — allow TCP 3306 only from the VM subnet CIDR
-resource "oci_core_security_list" "mysql" {
+# PostgreSQL subnet — allow TCP 5432 only from the VM subnet CIDR
+resource "oci_core_security_list" "postgres" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "mysql-sl"
+  display_name   = "postgres-sl"
 
   ingress_security_rules {
     protocol  = "6" # TCP
@@ -78,8 +76,8 @@ resource "oci_core_security_list" "mysql" {
     stateless = false
 
     tcp_options {
-      min = 3306
-      max = 3306
+      min = 5432
+      max = 5432
     }
   }
 
@@ -94,7 +92,7 @@ resource "oci_core_security_list" "mysql" {
 resource "oci_core_security_list" "vm" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "mysql-vm-sl"
+  display_name   = "postgres-vm-sl"
 
   ingress_security_rules {
     protocol  = "6" # TCP
@@ -129,20 +127,20 @@ resource "oci_core_security_list" "vm" {
 # Subnets
 # ================================================================================
 
-# Private subnet — MySQL DB System lives here; no public IPs permitted
-resource "oci_core_subnet" "mysql" {
+# Private subnet — PostgreSQL DB System lives here; no public IPs permitted
+resource "oci_core_subnet" "postgres" {
   compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_vcn.main.id
   cidr_block        = "10.0.0.0/25"
-  display_name      = "mysql-subnet"
-  dns_label         = "mysqlsub"
-  route_table_id    = oci_core_route_table.mysql.id
-  security_list_ids = [oci_core_security_list.mysql.id]
+  display_name      = "postgres-subnet"
+  dns_label         = "postgressub"
+  route_table_id    = oci_core_route_table.postgres.id
+  security_list_ids = [oci_core_security_list.postgres.id]
 
   prohibit_public_ip_on_vnic = true
 }
 
-# Public subnet — phpMyAdmin VM lives here with a public IP
+# Public subnet — pgweb VM lives here with a public IP
 resource "oci_core_subnet" "vm" {
   compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_vcn.main.id

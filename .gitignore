@@ -4,4 +4,4 @@
 *.terraform.lock.hcl
 *.terraform.*
 *.pem
-01-mysql/keys/
+01-postgres/keys/

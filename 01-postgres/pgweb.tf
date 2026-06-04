@@ -1,19 +1,19 @@
 # ================================================================================
-# phpMyAdmin VM
+# pgweb VM
 # ================================================================================
 # Ubuntu instance in the public VM subnet. Bootstrapped via cloud-init with
-# phpMyAdmin pre-configured to connect to the MySQL DB System private IP.
+# pgweb pre-installed and the Pagila sample database loaded into PostgreSQL.
 #
 # Notes:
-#   - assign_public_ip = true gives an ephemeral public IP from the IGW subnet
-#   - VM_PASSWORD sets the ubuntu user's password for console/SSH fallback
-#   - depends_on ensures MySQL is ready before cloud-init attempts sakila import
+#   - assign_public_ip = true gives an ephemeral public IP via the IGW subnet
+#   - VM_PASSWORD sets the ubuntu user's password for SSH fallback
+#   - depends_on ensures PostgreSQL is ready before cloud-init attempts pagila load
 # ================================================================================
 
-resource "oci_core_instance" "phpmyadmin" {
+resource "oci_core_instance" "pgweb" {
   compartment_id      = var.compartment_ocid
   availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
-  display_name        = "phpmyadmin-vm"
+  display_name        = "pgweb-vm"
   shape               = "VM.Standard.E4.Flex"
 
   shape_config {
@@ -29,18 +29,19 @@ resource "oci_core_instance" "phpmyadmin" {
   create_vnic_details {
     subnet_id        = oci_core_subnet.vm.id
     assign_public_ip = true
-    display_name     = "phpmyadmin-vnic"
+    display_name     = "pgweb-vnic"
   }
 
   metadata = {
     ssh_authorized_keys = tls_private_key.ssh.public_key_openssh
-    user_data = base64encode(templatefile("./scripts/phpmyadmin.sh.template", {
-      PASSWORD    = random_password.mysql_password.result
-      MYSQL_HOST  = oci_mysql_mysql_db_system.mysql.ip_address
-      USER        = "sysadmin"
-      VM_PASSWORD = random_password.vm_password.result
+    user_data = base64encode(templatefile("./scripts/install_pgweb.sh.template", {
+      POSTGRES_HOST = oci_psql_db_system.postgres.network_endpoint_details[0].primary_db_endpoint_fqdn
+      POSTGRES_PORT = 5432
+      POSTGRES_USER = "postgres"
+      POSTGRES_PASSWORD = random_password.postgres_password.result
+      VM_PASSWORD       = random_password.vm_password.result
     }))
   }
 
-  depends_on = [oci_mysql_mysql_db_system.mysql]
+  depends_on = [oci_psql_db_system.postgres]
 }

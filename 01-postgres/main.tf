@@ -58,7 +58,6 @@ data "oci_identity_availability_domains" "ads" {
 # ================================================================================
 # Image Lookup
 # Queries for the latest Ubuntu 24.04 image compatible with VM.Standard.E4.Flex.
-# sort_order = DESC returns the newest matching image.
 # ================================================================================
 
 data "oci_core_images" "ubuntu" {
