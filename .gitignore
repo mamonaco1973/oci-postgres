@@ -1,0 +1,7 @@
+.terraform
+*.tfstate
+*.tfstate.backup
+*.terraform.lock.hcl
+*.terraform.*
+*.pem
+01-mysql/keys/
