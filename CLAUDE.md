@@ -31,7 +31,7 @@ VCN: 10.0.0.0/23
 ```
 
 - **Region:** us-ashburn-1
-- **PostgreSQL shape:** `PostgreSQL.VM.Standard.E4.Flex.2.32GB` (2 OCPUs, 32 GB RAM)
+- **PostgreSQL shape:** `PostgreSQL.VM.Standard.E5.Flex.2.32GB` (2 OCPUs, 32 GB RAM)
 - **VM shape:** `VM.Standard.E4.Flex` (1 OCPU, 4 GB RAM)
 - **PostgreSQL provisioning:** typically 10–20 minutes
 

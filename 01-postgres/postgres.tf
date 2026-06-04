@@ -15,7 +15,7 @@ resource "oci_psql_db_system" "postgres" {
   compartment_id = var.compartment_ocid
   display_name   = "postgres-db-system"
   db_version     = "14"
-  shape          = "PostgreSQL.VM.Standard.E4.Flex.2.32GB"
+  shape          = "PostgreSQL.VM.Standard.E5.Flex.2.32GB"
   instance_count = 1
 
   credentials {
