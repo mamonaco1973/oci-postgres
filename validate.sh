@@ -34,7 +34,7 @@ MAX_ATTEMPTS=30
 SLEEP_SECONDS=30
 attempt=1
 
-until curl -sf --head --max-time 5 "${PGWEB_URL}" > /dev/null 2>&1; do
+until curl -sf -o /dev/null --max-time 5 "${PGWEB_URL}" > /dev/null 2>&1; do
   if [ "${attempt}" -ge "${MAX_ATTEMPTS}" ]; then
     echo "ERROR: pgweb did not become available after ${MAX_ATTEMPTS} attempts."
     exit 1
