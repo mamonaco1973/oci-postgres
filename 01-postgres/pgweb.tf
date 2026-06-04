@@ -35,7 +35,7 @@ resource "oci_core_instance" "pgweb" {
   metadata = {
     ssh_authorized_keys = tls_private_key.ssh.public_key_openssh
     user_data = base64encode(templatefile("./scripts/install_pgweb.sh.template", {
-      POSTGRES_HOST = oci_psql_db_system.postgres.network_details[0].primary_db_endpoint_fqdn
+      POSTGRES_HOST = oci_psql_db_system.postgres.network_details[0].primary_db_endpoint_private_ip
       POSTGRES_PORT = 5432
       POSTGRES_USER = "postgres"
       POSTGRES_PASSWORD = random_password.postgres_password.result

@@ -44,7 +44,7 @@ VCN: 10.0.0.0/23
 | `01-postgres/postgres.tf` | `oci_psql_db_system` resource |
 | `01-postgres/pgweb.tf` | Ubuntu compute instance with cloud-init |
 | `01-postgres/credentials.tf` | `random_password` resources (no vault — passwords in tfstate) |
-| `01-postgres/outputs.tf` | `pgweb_public_ip`, `postgres_endpoint`, sensitive passwords |
+| `01-postgres/outputs.tf` | `pgweb_public_ip`, `postgres_private_ip`, sensitive passwords |
 | `01-postgres/variables.tf` | `compartment_ocid`, `region` |
 | `01-postgres/scripts/install_pgweb.sh.template` | cloud-init: installs pgweb, loads Pagila, sets VM password |
 | `01-postgres/data/` | Pagila SQL files — cloned from GitHub in cloud-init |
@@ -90,7 +90,7 @@ pgweb does not pre-configure a connection — enter details manually in the brow
 
 | Field    | Value |
 |----------|-------|
-| Host     | `<postgres_endpoint>` (from `./get_password.sh`) |
+| Host     | `<postgres_private_ip>` (from `./get_password.sh`) |
 | Port     | `5432` |
 | Database | `pagila` |
 | Username | `postgres` |

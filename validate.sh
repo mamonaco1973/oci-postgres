@@ -10,7 +10,7 @@ set -euo pipefail
 # ------------------------------------------------------------------------------
 
 PGWEB_IP=$(terraform -chdir=01-postgres output -raw pgweb_public_ip 2>/dev/null || true)
-POSTGRES_ENDPOINT=$(terraform -chdir=01-postgres output -raw postgres_endpoint 2>/dev/null || true)
+POSTGRES_PRIVATE_IP=$(terraform -chdir=01-postgres output -raw postgres_private_ip 2>/dev/null || true)
 
 if [ -z "${PGWEB_IP}" ]; then
   echo "ERROR: Could not read Terraform outputs. Run ./apply.sh first."
@@ -21,7 +21,7 @@ PGWEB_URL="http://${PGWEB_IP}"
 
 echo "NOTE: SSH command: ssh -i 01-postgres/keys/Private_Key -o StrictHostKeyChecking=no ubuntu@${PGWEB_IP}"
 echo "NOTE: pgweb endpoint:        ${PGWEB_URL}"
-echo "NOTE: PostgreSQL private DNS: ${POSTGRES_ENDPOINT}"
+echo "NOTE: PostgreSQL private IP: ${POSTGRES_PRIVATE_IP}"
 
 # ------------------------------------------------------------------------------
 # Wait for pgweb to become reachable
@@ -53,6 +53,6 @@ echo "==========================================================================
 echo "BUILD VALIDATION RESULTS"
 echo "================================================================================"
 echo "pgweb URL            : ${PGWEB_URL}"
-echo "PostgreSQL private DNS: ${POSTGRES_ENDPOINT}"
+echo "PostgreSQL private IP: ${POSTGRES_PRIVATE_IP}"
 echo "Credentials          : ./get_password.sh"
 echo "================================================================================"
