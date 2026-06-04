@@ -26,10 +26,8 @@ resource "oci_psql_db_system" "postgres" {
     }
   }
 
-  network_endpoint_details {
-    network_type = "PRIVATE"
-    subnet_id    = oci_core_subnet.postgres.id
-    vcn_id       = oci_core_vcn.main.id
+  network_details {
+    subnet_id = oci_core_subnet.postgres.id
   }
 
   storage_details {

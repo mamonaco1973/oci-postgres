@@ -9,7 +9,7 @@ output "pgweb_public_ip" {
 
 output "postgres_endpoint" {
   description = "Private FQDN of the PostgreSQL DB System"
-  value       = oci_psql_db_system.postgres.network_endpoint_details[0].primary_db_endpoint_fqdn
+  value       = oci_psql_db_system.postgres.network_details[0].primary_db_endpoint_fqdn
 }
 
 output "postgres_password" {
