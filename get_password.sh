@@ -8,7 +8,6 @@ set -euo pipefail
 POSTGRES_PASSWORD=$(terraform -chdir=01-postgres output -raw postgres_password 2>/dev/null)
 VM_PASSWORD=$(terraform -chdir=01-postgres output -raw vm_password 2>/dev/null)
 PGWEB_IP=$(terraform -chdir=01-postgres output -raw pgweb_public_ip 2>/dev/null)
-POSTGRES_FQDN=$(terraform -chdir=01-postgres output -raw postgres_fqdn 2>/dev/null)
 POSTGRES_PRIVATE_IP=$(terraform -chdir=01-postgres output -raw postgres_private_ip 2>/dev/null)
 
 if [ -z "$POSTGRES_PASSWORD" ]; then
@@ -19,8 +18,7 @@ fi
 echo "PostgreSQL DB System:"
 echo "  Username : postgres"
 echo "  Password : ${POSTGRES_PASSWORD}"
-echo "  FQDN     : ${POSTGRES_FQDN} (private, VCN only)"
-echo "  IP       : ${POSTGRES_PRIVATE_IP} (private)"
+echo "  Host     : ${POSTGRES_PRIVATE_IP} (private)"
 echo ""
 echo "pgweb VM:"
 echo "  Username : ubuntu"

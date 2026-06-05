@@ -12,11 +12,6 @@ output "postgres_private_ip" {
   value       = oci_psql_db_system.postgres.network_details[0].primary_db_endpoint_private_ip
 }
 
-output "postgres_fqdn" {
-  description = "Friendly FQDN for the PostgreSQL endpoint (resolved via /etc/hosts on pgweb VM)"
-  value       = "postgres.db.internal"
-}
-
 output "postgres_password" {
   description = "PostgreSQL admin password — retrieve with ./get_password.sh"
   value       = random_password.postgres_password.result

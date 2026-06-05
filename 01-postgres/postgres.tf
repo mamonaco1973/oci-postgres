@@ -1,22 +1,23 @@
 # ================================================================================
 # OCI PostgreSQL DB System
 # ================================================================================
-# Provisions a private PostgreSQL DB System accessible only from the VM subnet
-# via private FQDN. No public endpoint is exposed.
+# Provisions a private PostgreSQL DB System accessible only from the VM subnet.
+# No public endpoint is exposed.
 #
 # Notes:
-#   - PostgreSQL.VM.Standard.E5.Flex — 2 OCPUs, 32 GB RAM (OCI strips size suffix)
+#   - PostgreSQL.VM.Standard.E5.Flex — flex shape requires explicit OCPU + RAM
 #   - instance_count = 1 — single node (no HA standby)
 #   - DB System provisioning typically takes 10-20 minutes
-#   - Endpoint FQDN is available via network_endpoint_details after creation
 # ================================================================================
 
 resource "oci_psql_db_system" "postgres" {
-  compartment_id = var.compartment_ocid
-  display_name   = "postgres-db-system"
-  db_version     = "14"
-  shape          = "PostgreSQL.VM.Standard.E5.Flex"
-  instance_count = 1
+  compartment_id          = var.compartment_ocid
+  display_name            = "postgres-db-system"
+  db_version              = "14"
+  shape                   = "PostgreSQL.VM.Standard.E5.Flex"
+  instance_count          = 1
+  instance_ocpu_count     = 2
+  instance_memory_size_in_gbs = 32
 
   credentials {
     username = "postgres"
