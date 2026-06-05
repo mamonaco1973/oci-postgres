@@ -22,7 +22,7 @@ OCI PostgreSQL is Oracle's fully managed PostgreSQL database service. It runs st
 | **Aspect**            | **OCI PostgreSQL**                                        | **AWS RDS PostgreSQL**                              |
 |-----------------------|-----------------------------------------------------------|-----------------------------------------------------|
 | **Networking**        | Private subnet in VCN; no public endpoint                | Public or private subnet; public access configurable |
-| **Shape model**       | Named shapes (PostgreSQL.VM.Standard.E5.Flex.2.32GB)     | Instance classes (db.t4g.micro, db.r6g.large, etc.) |
+| **Shape model**       | Named shapes (PostgreSQL.VM.Standard.E5.Flex)            | Instance classes (db.t4g.micro, db.r6g.large, etc.) |
 | **Read replicas**     | Not supported in this tier                               | Supported                                           |
 | **Serverless option** | Not available                                            | Aurora Serverless v2                                |
 | **Provisioning time** | 10–20 minutes                                            | 5–10 minutes                                        |
@@ -87,7 +87,7 @@ After applying the Terraform configuration, the following OCI resources will be 
 - `postgres-vm-sl` — allows TCP 80 (HTTP) and TCP 22 (SSH) inbound from anywhere
 
 ### PostgreSQL DB System
-- Shape: `PostgreSQL.VM.Standard.E5.Flex.2.32GB` (2 OCPUs, 32 GB RAM)
+- Shape: `PostgreSQL.VM.Standard.E5.Flex` (2 OCPUs, 32 GB RAM)
 - PostgreSQL version: 14
 - Private FQDN only — no public endpoint exposed
 - Automated backups enabled

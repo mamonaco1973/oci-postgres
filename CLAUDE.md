@@ -32,7 +32,7 @@ VCN: 10.0.0.0/23
 ```
 
 - **Region:** us-ashburn-1
-- **PostgreSQL shape:** `PostgreSQL.VM.Standard.E5.Flex.2.32GB` (2 OCPUs, 32 GB RAM)
+- **PostgreSQL shape:** `PostgreSQL.VM.Standard.E5.Flex` (2 OCPUs, 32 GB RAM — OCI strips the size suffix in state)
 - **VM shape:** `VM.Standard.E4.Flex` (1 OCPU, 4 GB RAM)
 - **PostgreSQL provisioning:** typically 10–20 minutes
 
@@ -88,12 +88,10 @@ Both lists allow unrestricted egress.
 
 ## Private DNS FQDN
 
-`dns.tf` creates a private DNS zone `postgres-<hex>.internal` with an A record
-`db.postgres-<hex>.internal → PostgreSQL private IP`. The zone is attached to
-the VCN's managed DNS resolver via `oci_dns_resolver`, so it resolves from any
-VM in the VCN. The `depends_on` on the data source forces apply-time evaluation
-— without it, Terraform reads `oci_core_vcn_dns_resolver_association` during
-plan before the VCN exists, gets a null resolver ID, and errors.
+The PostgreSQL endpoint is reachable as `postgres.db.internal` from the pgweb
+VM. OCI managed PostgreSQL does not support `hostname_label` on
+`network_details`, so the FQDN is written to `/etc/hosts` on the pgweb VM
+during cloud-init. pgweb resolves hostnames server-side so this is sufficient.
 The FQDN and raw private IP are both available from `./get_password.sh`.
 
 ## pgweb Connection
@@ -102,7 +100,7 @@ pgweb does not pre-configure a connection — enter details manually in the brow
 
 | Field    | Value |
 |----------|-------|
-| Host     | `<postgres_fqdn>` (from `./get_password.sh`, e.g. `db.postgres-a3f9b2c1.internal`) |
+| Host     | `postgres.db.internal` |
 | Port     | `5432` |
 | Database | `pagila` |
 | Username | `postgres` |

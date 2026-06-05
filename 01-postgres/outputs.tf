@@ -13,8 +13,8 @@ output "postgres_private_ip" {
 }
 
 output "postgres_fqdn" {
-  description = "Private DNS FQDN for the PostgreSQL endpoint (resolvable within the VCN)"
-  value       = "db.postgres-${random_id.dns.hex}.internal"
+  description = "Friendly FQDN for the PostgreSQL endpoint (resolved via /etc/hosts on pgweb VM)"
+  value       = "postgres.db.internal"
 }
 
 output "postgres_password" {

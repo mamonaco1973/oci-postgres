@@ -18,6 +18,10 @@ echo "NOTE: Network ready."
 # Force IPv4 for apt — OCI NAT gateway drops IPv6 silently
 echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
 
+# Map the friendly FQDN to the PostgreSQL private IP — OCI managed PostgreSQL
+# does not support hostname_label so /etc/hosts is the only reliable option
+echo "${POSTGRES_IP} ${POSTGRES_HOST}" >> /etc/hosts
+
 # -----------------------------------------------------------------------
 # UPDATE & INSTALL DEPENDENCIES
 # Retry loop handles the apt lock race at early OCI boot

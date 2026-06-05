@@ -5,7 +5,7 @@
 # via private FQDN. No public endpoint is exposed.
 #
 # Notes:
-#   - PostgreSQL.VM.Standard.E4.Flex.2.32GB — 2 OCPUs, 32 GB RAM
+#   - PostgreSQL.VM.Standard.E5.Flex — 2 OCPUs, 32 GB RAM (OCI strips size suffix)
 #   - instance_count = 1 — single node (no HA standby)
 #   - DB System provisioning typically takes 10-20 minutes
 #   - Endpoint FQDN is available via network_endpoint_details after creation
@@ -15,7 +15,7 @@ resource "oci_psql_db_system" "postgres" {
   compartment_id = var.compartment_ocid
   display_name   = "postgres-db-system"
   db_version     = "14"
-  shape          = "PostgreSQL.VM.Standard.E5.Flex.2.32GB"
+  shape          = "PostgreSQL.VM.Standard.E5.Flex"
   instance_count = 1
 
   credentials {
