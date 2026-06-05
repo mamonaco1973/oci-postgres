@@ -5,6 +5,10 @@
 #
 # Zone:  postgres-<hex>.internal
 # FQDN:  db.postgres-<hex>.internal  →  PostgreSQL primary private IP
+#
+# The data source depends_on forces apply-time evaluation — without it,
+# Terraform reads the data source during plan before the VCN exists, gets
+# a null resolver ID, and reports it as a missing required argument.
 # ================================================================================
 
 resource "random_id" "dns" {
@@ -12,8 +16,10 @@ resource "random_id" "dns" {
 }
 
 # Look up the DNS resolver OCI auto-created for the VCN
+# depends_on forces this to be read at apply time, not plan time
 data "oci_core_vcn_dns_resolver_association" "main" {
-  vcn_id = oci_core_vcn.main.id
+  vcn_id     = oci_core_vcn.main.id
+  depends_on = [oci_core_vcn.main]
 }
 
 # Private view — container for our custom DNS zone

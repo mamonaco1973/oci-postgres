@@ -86,6 +86,16 @@ Both lists allow unrestricted egress.
    REJECT rule at INPUT position 5. Port 80 is not pre-allowed. Fix:
    `iptables -I INPUT 5 -p tcp --dport 80 -j ACCEPT`.
 
+## Private DNS FQDN
+
+`dns.tf` creates a private DNS zone `postgres-<hex>.internal` with an A record
+`db.postgres-<hex>.internal → PostgreSQL private IP`. The zone is attached to
+the VCN's managed DNS resolver via `oci_dns_resolver`, so it resolves from any
+VM in the VCN. The `depends_on` on the data source forces apply-time evaluation
+— without it, Terraform reads `oci_core_vcn_dns_resolver_association` during
+plan before the VCN exists, gets a null resolver ID, and errors.
+The FQDN and raw private IP are both available from `./get_password.sh`.
+
 ## pgweb Connection
 
 pgweb does not pre-configure a connection — enter details manually in the browser:
