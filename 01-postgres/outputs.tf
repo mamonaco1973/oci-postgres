@@ -12,6 +12,11 @@ output "postgres_private_ip" {
   value       = oci_psql_db_system.postgres.network_details[0].primary_db_endpoint_private_ip
 }
 
+output "postgres_fqdn" {
+  description = "Private DNS FQDN for the PostgreSQL endpoint (resolvable within the VCN)"
+  value       = "db.postgres-${random_id.dns.hex}.internal"
+}
+
 output "postgres_password" {
   description = "PostgreSQL admin password — retrieve with ./get_password.sh"
   value       = random_password.postgres_password.result

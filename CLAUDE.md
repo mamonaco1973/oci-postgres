@@ -3,8 +3,9 @@
 ## What This Project Does
 
 Deploys a private PostgreSQL DB System on OCI plus an Ubuntu pgweb VM in a
-public subnet. The VM connects to PostgreSQL using the DB system's private FQDN,
-loads the Pagila sample database on first boot, and exposes pgweb on port 80.
+public subnet. The VM connects to PostgreSQL using a private DNS FQDN
+(`db.postgres-<hex>.internal`), loads the Pagila sample database on first
+boot, and exposes pgweb on port 80.
 
 Single Terraform phase in `01-postgres/`. No modules, no workspaces.
 
@@ -44,7 +45,8 @@ VCN: 10.0.0.0/23
 | `01-postgres/postgres.tf` | `oci_psql_db_system` resource |
 | `01-postgres/pgweb.tf` | Ubuntu compute instance with cloud-init |
 | `01-postgres/credentials.tf` | `random_password` resources (no vault — passwords in tfstate) |
-| `01-postgres/outputs.tf` | `pgweb_public_ip`, `postgres_private_ip`, sensitive passwords |
+| `01-postgres/dns.tf` | Private DNS zone, view, A record, VCN resolver attachment |
+| `01-postgres/outputs.tf` | `pgweb_public_ip`, `postgres_fqdn`, `postgres_private_ip`, sensitive passwords |
 | `01-postgres/variables.tf` | `compartment_ocid`, `region` |
 | `01-postgres/scripts/install_pgweb.sh.template` | cloud-init: installs pgweb, loads Pagila, sets VM password |
 | `01-postgres/data/` | Pagila SQL files — cloned from GitHub in cloud-init |
@@ -90,11 +92,14 @@ pgweb does not pre-configure a connection — enter details manually in the brow
 
 | Field    | Value |
 |----------|-------|
-| Host     | `<postgres_private_ip>` (from `./get_password.sh`) |
+| Host     | `<postgres_fqdn>` (from `./get_password.sh`, e.g. `db.postgres-a3f9b2c1.internal`) |
 | Port     | `5432` |
 | Database | `pagila` |
 | Username | `postgres` |
 | Password | `<postgres_password>` (from `./get_password.sh`) |
+
+The FQDN resolves only within the VCN. The raw private IP is also available
+from `./get_password.sh` if the FQDN is unresolvable during troubleshooting.
 
 ## SSH to pgweb VM
 
