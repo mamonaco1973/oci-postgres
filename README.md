@@ -6,6 +6,8 @@ The deployment provisions a fully managed OCI PostgreSQL DB System with no publi
 
 As part of the setup, the [Pagila](https://github.com/devrimgunduz/pagila) sample database—a PostgreSQL port of the Sakila movie rental database—is loaded into the PostgreSQL instance to demonstrate real-world queries and administration in a secure, private cloud environment.
 
+![diagram](oci-postgres.png)
+
 ## What You'll Learn
 
 - How to deploy a fully private PostgreSQL DB System on OCI using Terraform
