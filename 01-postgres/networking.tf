@@ -4,8 +4,8 @@
 # the PostgreSQL DB System.
 #
 # CIDR layout — 10.0.0.0/23:
-#   10.0.0.0/25  — postgres-subnet (private, DB system)
-#   10.0.1.0/25  — vm-subnet       (public,  pgweb VM)
+#   10.0.0.0/25  — private-subnet  (private, DB system)
+#   10.0.1.0/25  — public-subnet   (public,  pgweb VM)
 # ================================================================================
 
 resource "oci_core_vcn" "main" {
@@ -34,7 +34,7 @@ resource "oci_core_nat_gateway" "main" {
 # Route Tables
 # ================================================================================
 
-# vm-subnet routes through the IGW — pgweb needs a public IP and internet
+# public-subnet routes through the IGW — pgweb needs a public IP and internet
 resource "oci_core_route_table" "vm" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
@@ -47,7 +47,7 @@ resource "oci_core_route_table" "vm" {
   }
 }
 
-# postgres-subnet routes through NAT — DB system has no public endpoint
+# private-subnet routes through NAT — DB system has no public endpoint
 resource "oci_core_route_table" "postgres" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
@@ -132,7 +132,7 @@ resource "oci_core_subnet" "postgres" {
   compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_vcn.main.id
   cidr_block        = "10.0.0.0/25"
-  display_name      = "postgres-subnet"
+  display_name      = "private-subnet"
   dns_label         = "postgressub"
   route_table_id    = oci_core_route_table.postgres.id
   security_list_ids = [oci_core_security_list.postgres.id]
@@ -145,7 +145,7 @@ resource "oci_core_subnet" "vm" {
   compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_vcn.main.id
   cidr_block        = "10.0.1.0/25"
-  display_name      = "vm-subnet"
+  display_name      = "public-subnet"
   dns_label         = "vmsub"
   route_table_id    = oci_core_route_table.vm.id
   security_list_ids = [oci_core_security_list.vm.id]

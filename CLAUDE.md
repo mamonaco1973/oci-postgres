@@ -23,10 +23,10 @@ Single Terraform phase in `01-postgres/`. No modules, no workspaces.
 
 ```
 VCN: 10.0.0.0/23
-  ├── postgres-subnet (10.0.0.0/25) — private, NAT gateway
+  ├── private-subnet (10.0.0.0/25) — private, NAT gateway
   │     └── oci_psql_db_system  (PostgreSQL 14, port 5432)
   │
-  └── vm-subnet (10.0.1.0/25) — public, Internet Gateway
+  └── public-subnet (10.0.1.0/25) — public, Internet Gateway
         └── oci_core_instance  (Ubuntu 24.04, pgweb, port 80)
                                    └── connects to PostgreSQL private FQDN
 ```
@@ -70,8 +70,8 @@ sensitive Terraform outputs in `tfstate`. Retrieve with `./get_password.sh`.
 
 | Subnet | Security List | Rules |
 |--------|--------------|-------|
-| postgres-subnet | `postgres-sl` | Ingress TCP 5432 from `10.0.1.0/25` only |
-| vm-subnet | `postgres-vm-sl` | Ingress TCP 80 and TCP 22 from `0.0.0.0/0` |
+| private-subnet | `postgres-sl` | Ingress TCP 5432 from `10.0.1.0/25` only |
+| public-subnet | `postgres-vm-sl` | Ingress TCP 80 and TCP 22 from `0.0.0.0/0` |
 
 Both lists allow unrestricted egress.
 
