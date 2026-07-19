@@ -70,7 +70,7 @@ echo "NOTE: Pagila load complete." >> /root/db_load.log 2>&1
 # INSTALL PGWEB
 # -----------------------------------------------------------------------
 cd /tmp
-wget https://github.com/sosedoff/pgweb/releases/download/v0.16.2/pgweb_linux_amd64.zip
+wget https://github.com/sosedoff/pgweb/releases/download/v0.17.0/pgweb_linux_amd64.zip
 unzip pgweb_linux_amd64.zip >> /root/pgweb.log 2>&1
 chmod +x pgweb_linux_amd64
 mv pgweb_linux_amd64 /usr/local/bin/pgweb
